@@ -5,12 +5,14 @@ namespace Assets.Scripts.Server
 {
     public class SInternalPlayer
     {
-        private readonly uint playerId;
+        private readonly ushort playerId;
         private string name;
         private PlayerStates state;
-        static Dictionary<uint, SInternalPlayer> _players;
+        private bool? team1;
+        
+        static Dictionary<ushort, SInternalPlayer> _players;
 
-        public SInternalPlayer(uint playerId, string name, PlayerStates state)
+        public SInternalPlayer(ushort playerId, string name, PlayerStates state)
         {
             this.playerId = playerId;
             this.name = name;
@@ -18,12 +20,17 @@ namespace Assets.Scripts.Server
             _players[playerId] = this;
         }
 
-        public static SInternalPlayer GetPlayerFromID(uint id)
+        public static void DestroyID(ushort id)
+        {
+            _players.Remove(id);
+        }
+        
+        public static SInternalPlayer GetPlayerFromID(ushort id)
         {
             return _players[id];
         }
         
-        public uint PlayerId => playerId;
+        public ushort PlayerId => playerId;
 
         public string Name
         {
@@ -35,6 +42,12 @@ namespace Assets.Scripts.Server
         {
             get => state;
             set => state = value;
+        }
+
+        public bool? Team1
+        {
+            get => team1;
+            set => team1 = value;
         }
         
     }
