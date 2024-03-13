@@ -35,8 +35,8 @@ namespace Assets.Scripts.Server
         private Message CreateJoinMessageForPlayer(SInternalPlayer player)
         {
             Message playerJoinMessage = Message.Create(MessageSendMode.Reliable,ServerToClientProtocol.JoinPlayer);
-            playerJoinMessage.AddString(message.GetString());
-            playerJoinMessage.AddUShort(sender);
+            playerJoinMessage.AddString(player.Name);
+            playerJoinMessage.AddUShort(player.PlayerId);
             Debug.Assert(player.Team1 != null, "player.Team1 != null");
             playerJoinMessage.AddBool((bool)player.Team1);
             return playerJoinMessage;
