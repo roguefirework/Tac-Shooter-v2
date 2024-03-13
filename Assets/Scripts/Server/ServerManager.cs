@@ -30,7 +30,6 @@ public class ServerManager : MonoBehaviour
         SceneManager.LoadScene(mapScene,LoadSceneMode.Additive);
         // Open a lobby
         _lobbyManager = new SLobbyManager(_server, requiredPlayers, delayTime);
-        
     }
 
     public void FixedUpdate()
