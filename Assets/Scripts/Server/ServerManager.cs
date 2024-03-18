@@ -1,4 +1,3 @@
-
 using System;
 using Assets.Scripts.Server;
 using Riptide;
@@ -35,14 +34,14 @@ public class ServerManager : MonoBehaviour
     public void FixedUpdate()
     {
         _server.Update();
+        if (_lobbyManager.CanStart())
+        {
+            
+        }
     }
 
     public void OnApplicationQuit()
     {
         _server.Stop();
     }
-    
-    
-    
-    
 }
