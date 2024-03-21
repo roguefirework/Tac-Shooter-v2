@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.Server;
 using Riptide;
 using Shared;
 using UnityEngine;
@@ -16,6 +17,7 @@ public class ClientManager : MonoBehaviour
     
     private PersistentData _data;
     public Client Client;
+    public SInternalPlayer player;
     
     // Start is called before the first frame update
     void Start()
@@ -46,7 +48,7 @@ public class ClientManager : MonoBehaviour
 
     private void Disconnected(object sender, ConnectionFailedEventArgs connectionFailedEventArgs)
     {
-        
+        SInternalPlayer.ResetPlayer();
         SceneManager.LoadScene("Main Menu",LoadSceneMode.Single);
     }
 

@@ -9,25 +9,25 @@ namespace Assets.Scripts.Server
         private string name;
         private PlayerStates state;
         private bool? team1;
-        
-        static Dictionary<ushort, SInternalPlayer> _players;
+
+        private static readonly Dictionary<ushort, SInternalPlayer> Players = new();
 
         public SInternalPlayer(ushort playerId, string name, PlayerStates state)
         {
             this.playerId = playerId;
             this.name = name;
             this.state = state;
-            _players[playerId] = this;
+            Players[playerId] = this;
         }
 
         public static void DestroyID(ushort id)
         {
-            _players.Remove(id);
+            Players.Remove(id);
         }
         
         public static SInternalPlayer GetPlayerFromID(ushort id)
         {
-            return _players[id];
+            return Players[id];
         }
         
         public ushort PlayerId => playerId;
@@ -49,6 +49,11 @@ namespace Assets.Scripts.Server
             get => team1;
             set => team1 = value;
         }
-        
+
+        public static void ResetPlayer()
+        {
+            Players.Clear();
+            
+        }
     }
 }

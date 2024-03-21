@@ -25,6 +25,10 @@ public class ServerManager : MonoBehaviour
         // Setup server
         _server = new Server();
         _server.Start(port,maxClientCount,useMessageHandlers:false);
+        _server.MessageReceived += (_, arg) =>
+        {
+            Debug.Log(arg.MessageId);
+        };
         // Load the scene
         SceneManager.LoadScene(mapScene,LoadSceneMode.Additive);
         // Open a lobby

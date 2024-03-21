@@ -908,8 +908,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 011fa62a4dd83dfa9b3b89a540c7531e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usernameFields: {fileID: 557153496}
-  serverIP: {fileID: 1674288982}
+  usernameFields: {fileID: 1972584712}
+  serverIP: {fileID: 507208060}
   data: {fileID: 1403697849}
   clientScene: Client
   serverScene: Server

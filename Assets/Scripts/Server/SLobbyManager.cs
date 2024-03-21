@@ -37,7 +37,6 @@ namespace Assets.Scripts.Server
                     OnSwitchReadyState(args.FromConnection.Id, args.Message);
             };
             
-            
             this.requiredPlayers = requiredPlayers;
             this.delayTime = delayTime;
         }
