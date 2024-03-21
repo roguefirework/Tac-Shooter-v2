@@ -8,8 +8,8 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     #region UI Elements
-    [SerializeField] private TextMeshProUGUI usernameFields;
-    [SerializeField] private TextMeshProUGUI serverIP;
+    [SerializeField] private TMP_InputField usernameFields;
+    [SerializeField] private TMP_InputField serverIP;
     [SerializeField] private PersistentData data;
     #endregion
     #region Scenes

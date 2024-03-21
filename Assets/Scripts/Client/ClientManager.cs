@@ -15,30 +15,33 @@ public class ClientManager : MonoBehaviour
     
     
     private PersistentData _data;
-    private Client _client;
+    public Client Client;
     
     // Start is called before the first frame update
     void Start()
     {
         Instance = this;
+        Logging.Logging.Instance.SetupRiptideLogger();
         _data = PersistentData.Instance;
-        _client = new Client();
-        _client.ConnectionFailed += Disconnected;
-        _client.Disconnected += (_, _) => Disconnected(null,null);
-        _client.Connected += Connected;
-        bool connected = _client.Connect(_data.TargetIP + $":{port}",useMessageHandlers:false);
         
+        Client = new Client();
+        Client.ConnectionFailed += Disconnected;
+        Client.Disconnected += (_, _) => Disconnected(null,null);
+        Client.Connected += Connected;
+        
+        string ip = _data.TargetIP + ':' + port;
+        Client.Connect(ip,useMessageHandlers:false);
     }
 
     private void Connected(object sender, EventArgs e)
     {
-        _client.Send(Message.Create(MessageSendMode.Reliable,ClientToServerProtocol.JoinGame).AddString(_data.Username));
+        Client.Send(Message.Create(MessageSendMode.Reliable,ClientToServerProtocol.JoinGame).AddString(_data.Username));
         SceneManager.LoadScene(mainMenuScene,LoadSceneMode.Additive);
     }
 
     public void FixedUpdate()
     {
-        _client.Update();
+        Client.Update();
     }
 
     private void Disconnected(object sender, ConnectionFailedEventArgs connectionFailedEventArgs)
@@ -49,6 +52,6 @@ public class ClientManager : MonoBehaviour
 
     public void OnApplicationQuit()
     {
-        _client.Disconnect();
+        Client.Disconnect();
     }
 }

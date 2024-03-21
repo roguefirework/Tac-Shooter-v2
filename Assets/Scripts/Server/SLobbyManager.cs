@@ -101,6 +101,7 @@ namespace Assets.Scripts.Server
             Message playerJoinMessage = Message.Create(MessageSendMode.Reliable,ServerToClientProtocol.JoinPlayer);
             playerJoinMessage.AddString(player.Name);
             playerJoinMessage.AddUShort(player.PlayerId);
+            playerJoinMessage.AddUShort((ushort) player.State);
             Debug.Assert(player.Team1 != null, "player.Team1 != null");
             playerJoinMessage.AddBool((bool)player.Team1);
             return playerJoinMessage;
