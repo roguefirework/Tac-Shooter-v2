@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class ClientManager : MonoBehaviour
 {
-    public static ClientManager Instance { get; private set; };
+    public static ClientManager Instance { get; private set; }
 
     [SerializeField] private string mainMenuScene;
     [SerializeField] private ushort port;
