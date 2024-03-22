@@ -128,7 +128,10 @@ public class ClientMainMenu : MonoBehaviour
     {
         ushort sender = args.GetUShort();
         bool team = args.GetBool();
-        SInternalPlayer.GetPlayerFromID(sender).Team1 = team;
+        if (SInternalPlayer.GetPlayerFromID(sender).Team1 != team)
+        {
+            lobby.SwapTeam(SInternalPlayer.GetPlayerFromID(sender));
+        }
     }
 
     private void OnSwitchState(Message args)
