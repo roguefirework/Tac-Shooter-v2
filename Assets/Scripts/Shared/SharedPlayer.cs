@@ -3,16 +3,16 @@ using Assets.Scripts.Shared;
 
 namespace Assets.Scripts.Server
 {
-    public class SInternalPlayer
+    public class SharedPlayer
     {
         private readonly ushort playerId;
         private string name;
         private PlayerStates state;
         private bool? team1;
 
-        private static readonly Dictionary<ushort, SInternalPlayer> Players = new();
+        private static readonly Dictionary<ushort, SharedPlayer> Players = new();
 
-        public SInternalPlayer(ushort playerId, string name, PlayerStates state)
+        public SharedPlayer(ushort playerId, string name, PlayerStates state)
         {
             this.playerId = playerId;
             this.name = name;
@@ -25,7 +25,7 @@ namespace Assets.Scripts.Server
             Players.Remove(id);
         }
         
-        public static SInternalPlayer GetPlayerFromID(ushort id)
+        public static SharedPlayer GetPlayerFromID(ushort id)
         {
             return Players[id];
         }

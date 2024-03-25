@@ -2,7 +2,8 @@ namespace Shared
 {
     public enum ServerToClientProtocol : ushort
     {
-        JoinPlayer, // Join
+        JoinPlayer, 
+        PlayerLeave,
         PlayerSwitchTeam,
         PlayerSwitchState,
         Max,

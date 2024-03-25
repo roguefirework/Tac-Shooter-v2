@@ -17,7 +17,7 @@ public class ClientManager : MonoBehaviour
     
     private PersistentData _data;
     public Client Client;
-    public SInternalPlayer player;
+    public SharedPlayer player;
     
     // Start is called before the first frame update
     void Start()
@@ -48,7 +48,7 @@ public class ClientManager : MonoBehaviour
 
     private void Disconnected(object sender, ConnectionFailedEventArgs connectionFailedEventArgs)
     {
-        SInternalPlayer.ResetPlayer();
+        SharedPlayer.ResetPlayer();
         SceneManager.LoadScene("Main Menu",LoadSceneMode.Single);
     }
 

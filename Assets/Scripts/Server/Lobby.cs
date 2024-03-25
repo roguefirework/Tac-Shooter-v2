@@ -4,16 +4,16 @@ namespace Assets.Scripts.Server
 {
     public class Lobby
     {
-        readonly List<SInternalPlayer> playersInLobby = new();
-        readonly List<SInternalPlayer> team1 = new();
-        readonly List<SInternalPlayer> team2 = new();
+        readonly List<SharedPlayer> playersInLobby = new();
+        readonly List<SharedPlayer> team1 = new();
+        readonly List<SharedPlayer> team2 = new();
         public Lobby()
         {
             
         }
 
 
-        public void AddPlayer(SInternalPlayer player)
+        public void AddPlayer(SharedPlayer player)
         {
             bool? team = player.Team1;
             if (team != null)
@@ -44,7 +44,7 @@ namespace Assets.Scripts.Server
             }
         }
 
-        public void RemovePlayers(SInternalPlayer player)
+        public void RemovePlayers(SharedPlayer player)
         {
             if (team1.Contains(player))
             {
@@ -57,7 +57,7 @@ namespace Assets.Scripts.Server
             playersInLobby.Remove(player);
         }
 
-        public void SwapTeam(SInternalPlayer player)
+        public void SwapTeam(SharedPlayer player)
         {
             if (team1.Contains(player))
             {
@@ -72,17 +72,17 @@ namespace Assets.Scripts.Server
             player.Team1 = !player.Team1;
         }
         
-        public IReadOnlyList<SInternalPlayer> Team1()
+        public IReadOnlyList<SharedPlayer> Team1()
         {
             return team1;
         }
         
-        public IReadOnlyList<SInternalPlayer> Team2()
+        public IReadOnlyList<SharedPlayer> Team2()
         {
             return team2;
         }
 
-        public IReadOnlyList<SInternalPlayer> Players()
+        public IReadOnlyList<SharedPlayer> Players()
         {
             return playersInLobby;
         }

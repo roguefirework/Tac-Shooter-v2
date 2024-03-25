@@ -2,7 +2,6 @@ using Assets.Scripts.Shared;
 using Riptide;
 using Shared;
 using UnityEngine;
-using Debug = System.Diagnostics.Debug;
 
 namespace Assets.Scripts.Server
 {
@@ -21,21 +20,23 @@ namespace Assets.Scripts.Server
         {
             _server = server;
             _lobby = new Lobby();
+            
             _server.MessageReceived += (_, args) =>
             {
-                if (args.MessageId == (ushort)ClientToServerProtocol.JoinGame)
-                    OnJoin(args.FromConnection.Id, args.Message);
+                switch (args.MessageId)
+                {
+                    case (ushort)ClientToServerProtocol.SwitchTeam:
+                        OnSwitch(args.FromConnection.Id, args.Message);
+                        break;
+                    case (ushort)ClientToServerProtocol.SwitchState:
+                        OnSwitchReadyState(args.FromConnection.Id, args.Message);
+                        break;
+                    case (ushort)ClientToServerProtocol.JoinGame:
+                        OnJoin(args.FromConnection.Id, args.Message);
+                        break;
+                }
             };
-            _server.MessageReceived += (_, args) =>
-            {
-                if (args.MessageId == (ushort)ClientToServerProtocol.SwitchTeam)
-                    OnSwitch(args.FromConnection.Id, args.Message);
-            };
-            _server.MessageReceived += (_, args) =>
-            {
-                if (args.MessageId == (ushort)ClientToServerProtocol.SwitchState)
-                    OnSwitchReadyState(args.FromConnection.Id, args.Message);
-            };
+            _server.ClientDisconnected += (_, args) => OnPlayerLeave(args.Client.Id, args.Reason);
             
             this.requiredPlayers = requiredPlayers;
             this.delayTime = delayTime;
@@ -48,7 +49,7 @@ namespace Assets.Scripts.Server
         
         private void OnSwitchReadyState(ushort sender, Message message)
         {
-            SInternalPlayer switchingPlayer = SInternalPlayer.GetPlayerFromID(sender);
+            SharedPlayer switchingPlayer = SharedPlayer.GetPlayerFromID(sender);
             
             Message toAll = Message.Create(MessageSendMode.Reliable, ServerToClientProtocol.PlayerSwitchState);
             toAll.AddUShort(sender);
@@ -68,10 +69,21 @@ namespace Assets.Scripts.Server
             toAll.AddUShort((ushort)switchingPlayer.State);
             _server.SendToAll(toAll);
         }
+
+        private void OnPlayerLeave(ushort leavingPlayer, DisconnectReason reason)
+        {
+            SharedPlayer player = SharedPlayer.GetPlayerFromID(leavingPlayer);
+            _lobby.RemovePlayers(player);
+            Debug.Log($"[Server] player {player} left the game {reason}");
+            SharedPlayer.DestroyID(leavingPlayer);
+            Message toAll = Message.Create(MessageSendMode.Reliable,ServerToClientProtocol.PlayerLeave);
+            toAll.AddUShort(leavingPlayer);
+            _server.SendToAll(toAll);
+        }
         
         private void OnJoin(ushort sender, Message message)
         {
-            SInternalPlayer player = new SInternalPlayer(sender,message.GetString(),PlayerStates.Waiting);
+            SharedPlayer player = new SharedPlayer(sender,message.GetString(),PlayerStates.Waiting);
             _lobby.AddPlayer(player);
             foreach (var otherPlayer in _lobby.Players())
             {
@@ -83,7 +95,7 @@ namespace Assets.Scripts.Server
 
         private void OnSwitch(ushort sender, Message message)
         {
-            SInternalPlayer switchingPlayer = SInternalPlayer.GetPlayerFromID(sender);
+            SharedPlayer switchingPlayer = SharedPlayer.GetPlayerFromID(sender);
             
             Message toAll = Message.Create(MessageSendMode.Reliable, ServerToClientProtocol.PlayerSwitchTeam);
             toAll.AddUShort(sender);
@@ -95,7 +107,7 @@ namespace Assets.Scripts.Server
         
         
 
-        private Message CreateJoinMessageForPlayer(SInternalPlayer player)
+        private Message CreateJoinMessageForPlayer(SharedPlayer player)
         {
             Message playerJoinMessage = Message.Create(MessageSendMode.Reliable,ServerToClientProtocol.JoinPlayer);
             playerJoinMessage.AddString(player.Name);

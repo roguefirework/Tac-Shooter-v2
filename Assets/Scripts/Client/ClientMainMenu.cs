@@ -8,58 +8,59 @@ using Shared;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class ClientMainMenu : MonoBehaviour
 {
-    [SerializeField]
-    private Transform team1obj;
-    [SerializeField]
-    private Transform team2obj;
+    [FormerlySerializedAs("team1obj")] [SerializeField]
+    private Transform team1Obj;
+    [FormerlySerializedAs("team2obj")] [SerializeField]
+    private Transform team2Obj;
 
     [SerializeField] private Color readyColor;
     [SerializeField] private Color notReadyColor;
     [SerializeField] private Color playingColor;
     [SerializeField] private Color notJoinedColor;
     
-    private Button[] team1;
+    private Button[] _team1;
 
-    private Button[] team2;
+    private Button[] _team2;
 
-    private Lobby lobby;
+    private Lobby _lobby;
     // Start is called before the first frame update
     void Start()
     {
-        team1 = new Button[5];
-        team2 = new Button[5];
-        for (int i = 0; i < team1obj.childCount; i++)
+        _team1 = new Button[5];
+        _team2 = new Button[5];
+        for (int i = 0; i < team1Obj.childCount; i++)
         {
-            team1[i] = team1obj.GetChild(i).gameObject.GetComponent<Button>();
-            team1[i].onClick.AddListener(() => ClickTeam(true));
+            _team1[i] = team1Obj.GetChild(i).gameObject.GetComponent<Button>();
+            _team1[i].onClick.AddListener(() => ClickTeam(true));
         }
         
-        for (int i = 0; i < team2obj.childCount; i++)
+        for (int i = 0; i < team2Obj.childCount; i++)
         {
-            team2[i] = team2obj.GetChild(i).gameObject.GetComponent<Button>();
-            team2[i].onClick.AddListener(() => ClickTeam(false));
+            _team2[i] = team2Obj.GetChild(i).gameObject.GetComponent<Button>();
+            _team2[i].onClick.AddListener(() => ClickTeam(false));
         }
         
-        lobby = new Lobby();
+        _lobby = new Lobby();
         
         ClientManager.Instance.Client.MessageReceived += (_, args) =>
         {
-            if (args.MessageId == (ushort)ServerToClientProtocol.JoinPlayer)
-                OnJoin(args.Message);
-        };
-        ClientManager.Instance.Client.MessageReceived += (_, args) =>
-        {
-            if (args.MessageId == (ushort)ServerToClientProtocol.PlayerSwitchState)
-                OnSwitchState(args.Message);
-        };
-        ClientManager.Instance.Client.MessageReceived += (_, args) =>
-        {
-            if (args.MessageId == (ushort)ServerToClientProtocol.PlayerSwitchTeam)
-                OnSwitchTeam(args.Message);
+            switch (args.MessageId)
+            {
+                case (ushort)ServerToClientProtocol.JoinPlayer:
+                    OnJoin(args.Message);
+                    break;
+                case (ushort)ServerToClientProtocol.PlayerSwitchState:
+                    OnSwitchState(args.Message);
+                    break;
+                case (ushort)ServerToClientProtocol.PlayerSwitchTeam:
+                    OnSwitchTeam(args.Message);
+                    break;
+            }
         };
     }
 
@@ -80,7 +81,7 @@ public class ClientMainMenu : MonoBehaviour
     
     private void Update()
     {
-        void AddPlayer(Button button, SInternalPlayer sInternalPlayer)
+        void AddPlayer(Button button, SharedPlayer sInternalPlayer)
         {
             button.GetComponent<Image>().color = sInternalPlayer.State switch
             {
@@ -96,27 +97,27 @@ public class ClientMainMenu : MonoBehaviour
             button.transform.GetChild(0).GetComponent<TMP_Text>().SetText("Join");
         }
         
-        for (var i = 0; i < lobby.Team1().Count; i++)
+        for (var i = 0; i < _lobby.Team1().Count; i++)
         {
-            Button button = team1[i];
-            SInternalPlayer player = lobby.Team1()[i];
+            Button button = _team1[i];
+            SharedPlayer player = _lobby.Team1()[i];
             AddPlayer(button, player);
         }
 
-        for (var i = lobby.Team1().Count; i < 5; i++)
+        for (var i = _lobby.Team1().Count; i < 5; i++)
         {
-            Button button = team1[i];
+            Button button = _team1[i];
             AddNotPlayer(button);
         }
-        for (var i = 0; i < lobby.Team2().Count; i++)
+        for (var i = 0; i < _lobby.Team2().Count; i++)
         {
-            Button button = team2[i];
-            SInternalPlayer player = lobby.Team2()[i];
+            Button button = _team2[i];
+            SharedPlayer player = _lobby.Team2()[i];
             AddPlayer(button, player);
         }
-        for (var i = lobby.Team2().Count; i < 5; i++)
+        for (var i = _lobby.Team2().Count; i < 5; i++)
         {
-            Button button = team2[i];
+            Button button = _team2[i];
             AddNotPlayer(button);
         }
     }
@@ -132,12 +133,12 @@ public class ClientMainMenu : MonoBehaviour
 
         PlayerStates state = (PlayerStates) argsMessage.GetUShort();
         bool team = argsMessage.GetBool();
-        SInternalPlayer player = new SInternalPlayer(id, playerName, state);
+        SharedPlayer player = new SharedPlayer(id, playerName, state);
         player.Team1 = team;
-        lobby.AddPlayer(player);
+        _lobby.AddPlayer(player);
         if (PersistentData.Instance.Username == playerName)
         {
-            ClientManager.Instance.player = SInternalPlayer.GetPlayerFromID(id);
+            ClientManager.Instance.player = SharedPlayer.GetPlayerFromID(id);
         }
     }
 
@@ -145,9 +146,9 @@ public class ClientMainMenu : MonoBehaviour
     {
         ushort sender = args.GetUShort();
         bool team = args.GetBool();
-        if (SInternalPlayer.GetPlayerFromID(sender).Team1 != team)
+        if (SharedPlayer.GetPlayerFromID(sender).Team1 != team)
         {
-            lobby.SwapTeam(SInternalPlayer.GetPlayerFromID(sender));
+            _lobby.SwapTeam(SharedPlayer.GetPlayerFromID(sender));
         }
     }
 
@@ -155,6 +156,14 @@ public class ClientMainMenu : MonoBehaviour
     {
         ushort sender = args.GetUShort();
         PlayerStates state = (PlayerStates) args.GetUShort();
-        SInternalPlayer.GetPlayerFromID(sender).State = state;
+        SharedPlayer.GetPlayerFromID(sender).State = state;
+    }
+
+    private void OnDisconnect(Message args)
+    {
+        SharedPlayer player = SharedPlayer.GetPlayerFromID(args.GetUShort());
+        _lobby.RemovePlayers(player);
+        Debug.Log($"[Server] player {player.Name} left the game");
+        SharedPlayer.DestroyID(player.PlayerId);
     }
 }
