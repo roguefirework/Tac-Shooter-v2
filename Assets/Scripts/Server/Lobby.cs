@@ -4,9 +4,9 @@ namespace Assets.Scripts.Server
 {
     public class Lobby
     {
-        List<SInternalPlayer> playersInLobby = new();
-        List<SInternalPlayer> team1 = new();
-        List<SInternalPlayer> team2 = new();
+        readonly List<SInternalPlayer> playersInLobby = new();
+        readonly List<SInternalPlayer> team1 = new();
+        readonly List<SInternalPlayer> team2 = new();
         public Lobby()
         {
             
@@ -59,8 +59,6 @@ namespace Assets.Scripts.Server
 
         public void SwapTeam(SInternalPlayer player)
         {
-            
-            
             if (team1.Contains(player))
             {
                 team1.Remove(player);

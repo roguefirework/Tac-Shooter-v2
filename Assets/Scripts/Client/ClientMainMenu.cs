@@ -90,6 +90,11 @@ public class ClientMainMenu : MonoBehaviour
             };
             button.transform.GetChild(0).GetComponent<TMP_Text>().SetText(sInternalPlayer.Name);
         }
+        void AddNotPlayer(Button button)
+        {
+            button.GetComponent<Image>().color = notJoinedColor;
+            button.transform.GetChild(0).GetComponent<TMP_Text>().SetText("Join");
+        }
         
         for (var i = 0; i < lobby.Team1().Count; i++)
         {
@@ -97,14 +102,26 @@ public class ClientMainMenu : MonoBehaviour
             SInternalPlayer player = lobby.Team1()[i];
             AddPlayer(button, player);
         }
+
+        for (var i = lobby.Team1().Count; i < 5; i++)
+        {
+            Button button = team1[i];
+            AddNotPlayer(button);
+        }
         for (var i = 0; i < lobby.Team2().Count; i++)
         {
             Button button = team2[i];
             SInternalPlayer player = lobby.Team2()[i];
             AddPlayer(button, player);
         }
-        
+        for (var i = lobby.Team2().Count; i < 5; i++)
+        {
+            Button button = team2[i];
+            AddNotPlayer(button);
+        }
     }
+
+
 
 
     private void OnJoin(Message argsMessage)
