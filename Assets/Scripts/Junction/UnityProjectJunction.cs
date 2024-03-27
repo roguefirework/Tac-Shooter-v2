@@ -22,7 +22,7 @@
 // Place it in your Unity project in a directory called "Editor". A new menu will appear
 // on the top bar called "Unity Project Junction". Click it and Create Unity Junction Project.
 // You can now open this "new" project in a separate Unity Editor instance.
-
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using System.IO;
@@ -30,6 +30,7 @@ using System.Diagnostics;
 
 public static class UnityProjectJunctionTool
 {
+	
 	[MenuItem("Unity Project Junction/Create Junction Unity Project")]
 	private static void CreateJunctionUnityProject()
 	{
@@ -120,3 +121,4 @@ public static class UnityProjectJunctionTool
 		proc.WaitForExit();
 	}
 }
+#endif
