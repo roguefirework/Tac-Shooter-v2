@@ -60,6 +60,9 @@ public class ClientMainMenu : MonoBehaviour
                 case (ushort)ServerToClientProtocol.PlayerSwitchTeam:
                     OnSwitchTeam(args.Message);
                     break;
+                case (ushort)ServerToClientProtocol.PlayerLeave:
+                    OnDisconnect(args.Message);
+                    break;
             }
         };
     }
@@ -122,12 +125,8 @@ public class ClientMainMenu : MonoBehaviour
         }
     }
 
-
-
-
     private void OnJoin(Message argsMessage)
     {
-        
         string playerName = argsMessage.GetString();
         ushort id = argsMessage.GetUShort();
 
